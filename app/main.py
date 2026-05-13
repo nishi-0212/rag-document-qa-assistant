@@ -2,6 +2,7 @@ from fastapi import FastAPI, UploadFile, File
 from pydantic import BaseModel
 from pathlib import Path
 import shutil
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.rag_pipeline import build_database, ask_question
 
@@ -9,6 +10,15 @@ from app.rag_pipeline import build_database, ask_question
 app = FastAPI(
     title="RAG Document QA API",
     version="1.0"
+)
+
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # okay for demo project
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 DATA_DIR = Path("data/docs")
