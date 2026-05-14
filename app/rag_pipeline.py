@@ -5,19 +5,19 @@ import re
 from groq import Groq
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.embeddings import FastEmbedEmbeddings
 from langchain_chroma import Chroma
 
 from app.config import (
     DATA_PATH,
     VECTOR_STORE_PATH,
     GROQ_API_KEY,
-    GROQ_MODEL,
-    EMBEDDING_MODEL
+    GROQ_MODEL
 )
 
-
 client = Groq(api_key=GROQ_API_KEY)
+
+_embedding_instance = None
 
 
 def load_documents():
@@ -67,14 +67,12 @@ def split_documents(documents):
     return splitter.split_documents(documents)
 
 
-_embedding_instance = None
-
 def get_embeddings():
     global _embedding_instance
 
     if _embedding_instance is None:
-        _embedding_instance = HuggingFaceEmbeddings(
-            model_name=EMBEDDING_MODEL
+        _embedding_instance = FastEmbedEmbeddings(
+            model_name="BAAI/bge-small-en-v1.5"
         )
 
     return _embedding_instance
