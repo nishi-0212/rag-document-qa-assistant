@@ -23,32 +23,39 @@ def home():
 
 @app.post("/upload")
 async def upload_pdfs(files: list[UploadFile] = File(...)):
-    from app.rag_pipeline import build_database
+    try:
+        from app.rag_pipeline import build_database
 
-    uploaded_files = []
+        uploaded_files = []
 
-    for file in files:
-        if not file.filename.lower().endswith(".pdf"):
-            continue
+        for file in files:
+            if not file.filename.lower().endswith(".pdf"):
+                continue
 
-        file_path = DATA_DIR / file.filename
+            file_path = DATA_DIR / file.filename
 
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+            with open(file_path, "wb") as buffer:
+                shutil.copyfileobj(file.file, buffer)
 
-        uploaded_files.append(file.filename)
+            uploaded_files.append(file.filename)
 
-    if not uploaded_files:
-        return {"error": "No valid PDF files uploaded"}
+        if not uploaded_files:
+            return {"error": "No valid PDF files uploaded"}
 
-    build_result = build_database()
+        build_result = build_database()
 
-    return {
-        "message": "Files uploaded and database rebuilt successfully",
-        "uploaded_files": uploaded_files,
-        "build_details": build_result
-    }
+        return {
+            "message": "Files uploaded and database rebuilt successfully",
+            "uploaded_files": uploaded_files,
+            "build_details": build_result
+        }
 
+    except Exception as e:
+        import traceback
+        return {
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }
 
 @app.post("/query")
 def query_documents(request: QueryRequest):

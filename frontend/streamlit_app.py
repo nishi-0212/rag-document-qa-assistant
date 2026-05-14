@@ -154,12 +154,15 @@ if st.button("Create Knowledge Base", use_container_width=True):
 
         with st.spinner("Creating knowledge base..."):
             try:
-                response = requests.post(UPLOAD_URL, files=files)
+                response = requests.post(UPLOAD_URL, files=files, timeout=300)
+
+                st.write("Status:", response.status_code)
+                st.write("Response:", response.text)
 
                 if response.status_code == 200:
                     st.success("Knowledge base created successfully.")
                 else:
-                    st.error("Upload failed.")
+                    st.error(f"Upload failed: {response.text}")
             except Exception as e:
                 st.error(f"Connection error: {e}")
 
