@@ -2,23 +2,10 @@ from fastapi import FastAPI, UploadFile, File
 from pydantic import BaseModel
 from pathlib import Path
 import shutil
-from fastapi.middleware.cors import CORSMiddleware
-
-from app.rag_pipeline import build_database, ask_question
-
 
 app = FastAPI(
     title="RAG Document QA API",
     version="1.0"
-)
-
-# CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # okay for demo project
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
 )
 
 DATA_DIR = Path("data/docs")
@@ -36,6 +23,8 @@ def home():
 
 @app.post("/upload")
 async def upload_pdfs(files: list[UploadFile] = File(...)):
+    from app.rag_pipeline import build_database
+
     uploaded_files = []
 
     for file in files:
@@ -60,4 +49,5 @@ async def upload_pdfs(files: list[UploadFile] = File(...)):
 
 @app.post("/query")
 def query_documents(request: QueryRequest):
+    from app.rag_pipeline import ask_question
     return ask_question(request.question)
