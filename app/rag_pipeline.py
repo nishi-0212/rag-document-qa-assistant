@@ -67,10 +67,12 @@ def split_documents(documents):
     return splitter.split_documents(documents)
 
 
+embeddings = HuggingFaceEmbeddings(
+    model_name=EMBEDDING_MODEL
+)
+
 def get_embeddings():
-    return HuggingFaceEmbeddings(
-        model_name=EMBEDDING_MODEL
-    )
+    return embeddings
 
 
 def create_vector_store(chunks):

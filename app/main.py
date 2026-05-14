@@ -46,8 +46,10 @@ async def upload_pdfs(files: list[UploadFile] = File(...)):
         "build_details": build_result
     }
 
-
+from app.rag_pipeline import ask_question
 @app.post("/query")
 def query_documents(request: QueryRequest):
-    from app.rag_pipeline import ask_question
-    return ask_question(request.question)
+    try:
+        return ask_question(request.question)
+    except Exception as e:
+        return {"error": str(e)}
