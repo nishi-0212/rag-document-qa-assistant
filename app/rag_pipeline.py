@@ -72,7 +72,7 @@ def get_embeddings():
 
     if _embedding_instance is None:
         _embedding_instance = FastEmbedEmbeddings(
-            model_name="BAAI/bge-small-en-v1.5"
+            model_name="sentence-transformers/all-MiniLM-L6-v2"
         )
 
     return _embedding_instance

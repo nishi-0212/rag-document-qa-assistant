@@ -28,7 +28,7 @@ async def upload_pdfs(files: list[UploadFile] = File(...)):
     uploaded_files = []
 
     for file in files:
-        if not file.filename.endswith(".pdf"):
+        if not file.filename.lower().endswith(".pdf"):
             continue
 
         file_path = DATA_DIR / file.filename
@@ -38,6 +38,9 @@ async def upload_pdfs(files: list[UploadFile] = File(...)):
 
         uploaded_files.append(file.filename)
 
+    if not uploaded_files:
+        return {"error": "No valid PDF files uploaded"}
+
     build_result = build_database()
 
     return {
@@ -46,9 +49,11 @@ async def upload_pdfs(files: list[UploadFile] = File(...)):
         "build_details": build_result
     }
 
-from app.rag_pipeline import ask_question
+
 @app.post("/query")
 def query_documents(request: QueryRequest):
+    from app.rag_pipeline import ask_question
+
     try:
         return ask_question(request.question)
     except Exception as e:
